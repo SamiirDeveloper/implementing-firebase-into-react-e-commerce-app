@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
 interface CategorySelectProps {
   selectedCategory: string;
@@ -6,15 +8,16 @@ interface CategorySelectProps {
 }
 
 const fetchCategories = async (): Promise<string[]> => {
-  const response = await fetch(
-    "https://fakestoreapi.com/products/categories"
-  );
+  const productsRef = collection(db, "products");
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch categories");
-  }
+  const snapshot = await getDocs(productsRef);
 
-  return response.json();
+  const categories = snapshot.docs
+    .map((doc) => doc.data().category)
+    .filter((category): category is string => Boolean(category));
+
+  // Remove duplicate categories
+  return [...new Set(categories)];
 };
 
 export default function CategorySelect({
@@ -32,21 +35,33 @@ export default function CategorySelect({
   });
 
   if (isLoading) return <p>Loading categories...</p>;
-  if (isError) return <p>{(error as Error).message}</p>;
+
+  if (isError) {
+    return <p>{(error as Error).message}</p>;
+  }
 
   return (
     <div style={{ marginBottom: "1rem" }}>
-      <label htmlFor="category">Filter by Category: </label>
+      <label htmlFor="category">
+        Filter by Category:{" "}
+      </label>
 
       <select
         id="category"
         value={selectedCategory}
-        onChange={(e) => onSelectCategory(e.target.value)}
+        onChange={(e) =>
+          onSelectCategory(e.target.value)
+        }
       >
-        <option value="">All Categories</option>
+        <option value="">
+          All Categories
+        </option>
 
         {categories?.map((category) => (
-          <option key={category} value={category}>
+          <option
+            key={category}
+            value={category}
+          >
             {category}
           </option>
         ))}

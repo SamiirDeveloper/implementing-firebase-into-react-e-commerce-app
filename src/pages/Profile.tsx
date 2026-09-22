@@ -1,19 +1,65 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { updateProfile, deleteUser } from "firebase/auth";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const [displayName, setDisplayName] = useState(
-    user?.displayName || ""
-  );
-  const [email] = useState(user?.email || "");
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(true);
 
-  // Handle Profile update
+  // READ - Fetch user profile from Firestore
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) {
+        setProfileLoading(false);
+        return;
+      }
+
+      try {
+        setError("");
+
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+
+          setDisplayName(userData.displayName || "");
+          setEmail(userData.email || user.email || "");
+          setAddress(userData.address || "");
+        } else {
+          setDisplayName(user.displayName || "");
+          setEmail(user.email || "");
+        }
+      } catch (error: any) {
+        setError(
+          error.message || "Failed to load profile."
+        );
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [user]);
+
+  // UPDATE - Update Firebase Auth + Firestore
   const handleUpdateProfile = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
@@ -23,29 +69,40 @@ const Profile: React.FC = () => {
     setSuccess("");
 
     if (!user) {
-      setError("User not found");
+      setError("User not found.");
       return;
     }
 
     try {
       setLoading(true);
 
+      // Update Firebase Authentication profile
       await updateProfile(user, {
         displayName: displayName,
       });
 
+      // Update Firestore user document
+      const userRef = doc(db, "users", user.uid);
+
+      await updateDoc(userRef, {
+        displayName: displayName,
+        address: address,
+      });
+
       setSuccess("Profile updated successfully!");
     } catch (error: any) {
-      setError(error.message || "Failed to update profile.");
+      setError(
+        error.message || "Failed to update profile."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle account deletion
+  // DELETE - Delete Firestore document + Auth account
   const handleDeleteAccount = async () => {
     if (!user) {
-      setError("User not found");
+      setError("User not found.");
       return;
     }
 
@@ -60,15 +117,39 @@ const Profile: React.FC = () => {
       setSuccess("");
       setLoading(true);
 
+      const userRef = doc(db, "users", user.uid);
+
+      // Delete Firestore data first
+      await deleteDoc(userRef);
+
+      // Delete Firebase Authentication account
       await deleteUser(user);
 
-      setSuccess("Account deleted successfully.");
+      navigate("/register");
     } catch (error: any) {
-      setError(error.message || "Failed to delete account.");
+      setError(
+        error.message || "Failed to delete account."
+      );
     } finally {
       setLoading(false);
     }
   };
+
+  if (profileLoading) {
+    return (
+      <div className="min-vh-100 d-flex align-items-center justify-content-center">
+        <div className="text-center">
+          <div
+            className="spinner-border text-primary"
+            role="status"
+          />
+          <p className="mt-3 text-muted">
+            Loading profile...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-vh-100 bg-light py-5">
@@ -171,6 +252,27 @@ const Profile: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* Address */}
+                  <div className="mb-4">
+                    <label
+                      htmlFor="address"
+                      className="form-label fw-semibold"
+                    >
+                      Address
+                    </label>
+
+                    <input
+                      id="address"
+                      type="text"
+                      className="form-control form-control-lg"
+                      value={address}
+                      onChange={(e) =>
+                        setAddress(e.target.value)
+                      }
+                      placeholder="Enter your address"
+                    />
+                  </div>
+
                   {/* Update Button */}
                   <button
                     type="submit"
@@ -192,7 +294,6 @@ const Profile: React.FC = () => {
                   </button>
                 </form>
 
-                {/* Divider */}
                 <hr className="my-4" />
 
                 {/* Danger Zone */}
@@ -219,7 +320,6 @@ const Profile: React.FC = () => {
               </div>
             </div>
 
-            {/* Footer */}
             <p className="text-center text-muted small mt-4">
               Keep your profile information up to date.
             </p>

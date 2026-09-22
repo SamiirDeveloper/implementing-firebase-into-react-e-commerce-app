@@ -1,37 +1,53 @@
-import { createContext,useState, useEffect, useContext, type ReactNode } from "react";
-import { onAuthStateChanged, type User } from "firebase/auth";
-import {auth} from "../lib/firebase/firebase"
+import {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  type ReactNode,
+} from "react";
+
+import {
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth";
+
+import { auth } from "../firebase";
 
 interface AuthContextType {
-    user: null | User,
-    setUser: (user:User) => void
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
-const AuthContext = createContext<AuthcontextType> ({ 
-    user: null,
-    setUser: (user:User) => {}
-})
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  setUser: () => {},
+});
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setUser(user);
-            } else {
-                setUser(null);
-            }
-        });
+export const AuthProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  const [user, setUser] = useState<User | null>(null);
 
-        return () => unsubscribe();
-    }, []);
-
-    return (
-        <AuthContext.Provider value={{ user, setUser }}>
-            {children}
-        </AuthContext.Provider>    
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (user) => {
+        setUser(user);
+      }
     );
+
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ user, setUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);
+
 export default AuthContext;

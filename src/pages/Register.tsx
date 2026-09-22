@@ -3,7 +3,8 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "../lib/firebase/firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -25,7 +26,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // Create user with email and password
+      // 1. Create user in Firebase Authentication
       const userCredential =
         await createUserWithEmailAndPassword(
           auth,
@@ -33,11 +34,23 @@ const Register = () => {
           password
         );
 
-      // Update user profile with display name
-      await updateProfile(userCredential.user, {
+      const user = userCredential.user;
+
+      // 2. Add the user's name to their Firebase Auth profile
+      await updateProfile(user, {
         displayName: displayName,
       });
 
+      // 3. Create a user document in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        displayName: displayName,
+        email: user.email,
+        address: "",
+        createdAt: serverTimestamp(),
+      });
+
+      // 4. Send the new user to their profile
       navigate("/profile");
     } catch (error: any) {
       setError(
