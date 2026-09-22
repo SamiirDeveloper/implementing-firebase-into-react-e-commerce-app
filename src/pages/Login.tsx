@@ -174,7 +174,7 @@ const Login = () => {
 
             {/* Bottom Text */}
             <p className="text-center text-muted small mt-4">
-              © 2026 Your Store. All rights reserved.
+              © 2026 Samir Developer. All rights reserved.
             </p>
           </div>
         </div>
