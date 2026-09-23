@@ -1,94 +1,60 @@
-# 🛒 React E-Commerce Store with Firebase
+# 🛒 React E-Commerce Store
 
-## Overview
+A React and TypeScript e-commerce application using Firebase Authentication, Cloud Firestore, Redux Toolkit, and React Router.
 
-A React and TypeScript e-commerce application using **Firebase Authentication** and **Cloud Firestore**.
+## 🌐 Live Demo
 
-Users can register, log in, browse and manage products, add items to a shopping cart, place orders, and view their order history and individual order details.
-
-The project originally used the FakeStore API but has been migrated to **Cloud Firestore** for product management.
+https://implementing-firebase-into-react-e-commerce-of4qrzt5k.vercel.app/
 
 ## 🚀 Features
 
-* Firebase email/password authentication
-* User registration, login, and logout
-* User profile CRUD operations
-* Firestore product CRUD operations
-* Product category filtering
-* Redux Toolkit shopping cart
-* Cart persistence with `sessionStorage`
-* Firebase checkout and order creation
-* User-specific order history
-* Individual order details
-* Responsive Bootstrap interface
+- User registration, login, and logout
+- Firebase Authentication
+- Firestore product CRUD operations
+- Product filtering
+- Redux Toolkit shopping cart
+- Cart persistence with `sessionStorage`
+- Checkout and order creation
+- User order history
+- Responsive Bootstrap interface
 
-## 🔥 Firestore Collections
+## 🛠 Technologies
 
-```text
-users
-products
-orders
-```
+- React & TypeScript
+- Firebase / Cloud Firestore
+- Redux Toolkit
+- React Query
+- React Router
+- Bootstrap 5
+- Jest & React Testing Library
+- GitHub Actions
+- Vercel
 
-* `users` — Stores user profile information
-* `products` — Stores product information
-* `orders` — Stores completed user orders
+## 🧪 Testing & CI/CD
 
-## 🧠 Technologies
+The project includes unit and integration tests using Jest and React Testing Library.
 
-* React
-* TypeScript
-* Vite
-* Firebase Authentication
-* Cloud Firestore
-* Redux Toolkit
-* React Query
-* React Router
-* Bootstrap 5
+GitHub Actions automatically runs tests, builds the application, and deploys successful builds to Vercel when changes are pushed to `main`.
 
 ## ⚙️ Installation
 
-Clone the repository:
-
 ```bash
 git clone https://github.com/SamiirDeveloper/implementing-firebase-into-react-e-commerce-app.git
-```
-
-Install dependencies:
-
-```bash
+cd implementing-firebase-into-react-e-commerce-app
 npm install
-```
-
-Start the development server:
-
-```bash
 npm run dev
 ```
 
-## 🔥 Firebase Setup
+## 🤖 AI-Assisted Development
 
-To use your own Firebase project:
+AI was used as a learning and mentoring tool throughout this project to:
 
-1. Create a Firebase project.
-2. Register a Firebase Web App.
-3. Enable Email/Password Authentication.
-4. Create a Cloud Firestore database.
-5. Add your Firebase configuration to `src/firebase.ts`.
+- Explain unfamiliar concepts and code
+- Assist with debugging and troubleshooting
+- Generate boilerplate code and styling suggestions to save development time
+- Reinforce development best practices
 
-## 📌 Key Learning Outcomes
-
-This project demonstrates:
-
-* Firebase integration with React
-* Firebase Authentication
-* Firestore CRUD operations
-* User and product management
-* Redux Toolkit state management
-* Creating and storing orders
-* User-specific order history
-* React Router navigation
-* TypeScript with React
+AI assistance was used to support the development and learning process while improving understanding of the codebase.
 
 ## 👨‍💻 Author
 
