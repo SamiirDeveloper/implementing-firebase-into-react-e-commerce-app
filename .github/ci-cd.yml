@@ -1,6 +1,6 @@
 name: React Ecommerce App CI/CD
 
-on :
+on:
   push: 
     branches:
       - main
