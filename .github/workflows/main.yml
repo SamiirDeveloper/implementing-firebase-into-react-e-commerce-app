@@ -1,7 +1,7 @@
 name: React Ecommerce App CI/CD
 
 on:
-  push: 
+  push:
     branches:
       - main
   pull_request:
@@ -9,33 +9,31 @@ on:
       - main
 
 jobs:
-  build: #Continuous Integration 
+  build: # Continuous Integration
     runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout the code
-       - name: Checkout code
-         uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       # Step 2: Set up Node.js
-       - name: Set up Node.js
-         uses: actions/setup-node@v4
-         with:
-            node-version: '20'
-        
-      #Step 3: install dependencies
-       - name: Install dependencies
-         run: npm install --legacy-peer-deps
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-      #Step 4: Run tests
-       - name: Run tests
-         run: npm test -- --watchAll=false
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
 
-      #Step 5: build React app
-       - name: Build React app
-         run: npm run build
+      # Step 4: Run tests
+      - name: Run tests
+        run: npm test -- --watchAll=false
 
-
+      # Step 5: Build React app
+      - name: Build React app
+        run: npm run build
 
   deploy:
     # Continuous Deployment
@@ -53,6 +51,9 @@ jobs:
 
       - name: Install Vercel CLI
         run: npm install --global vercel
+
+      - name: Link Vercel project
+        run: vercel link --yes --project=implementing-firebase-into-react-e-commerce-app --scope=samiirdevelopers-projects --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Pull Vercel environment
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
