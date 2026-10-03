@@ -2,12 +2,7 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 
 import { db } from "../firebase";
@@ -31,14 +26,12 @@ export interface Product {
 const Home: React.FC = () => {
   const dispatch = useDispatch();
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Fetch categories from Firestore products
-  const {
-    data: categories = [],
-    isLoading: categoriesLoading,
-  } = useQuery<string[]>({
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery<
+    string[]
+  >({
     queryKey: ["categories"],
 
     queryFn: async () => {
@@ -48,10 +41,7 @@ const Home: React.FC = () => {
 
       const categories = snapshot.docs
         .map((document) => document.data().category)
-        .filter(
-          (category): category is string =>
-            typeof category === "string"
-        );
+        .filter((category): category is string => typeof category === "string");
 
       // Remove duplicate categories
       return [...new Set(categories)];
@@ -74,14 +64,7 @@ const Home: React.FC = () => {
       const productsQuery =
         selectedCategory === "all"
           ? productsRef
-          : query(
-              productsRef,
-              where(
-                "category",
-                "==",
-                selectedCategory
-              )
-            );
+          : query(productsRef, where("category", "==", selectedCategory));
 
       const snapshot = await getDocs(productsQuery);
 
@@ -111,19 +94,15 @@ const Home: React.FC = () => {
   const handleImageError = (
     e: React.SyntheticEvent<HTMLImageElement, Event>
   ) => {
-    e.currentTarget.src =
-      "https://via.placeholder.com/300x250";
+    e.currentTarget.src = "https://via.placeholder.com/300x250";
   };
 
   return (
     <div className="bg-light min-vh-100">
       <div className="container py-5">
-
         {/* Page Header */}
         <div className="text-center mb-5">
-          <h1 className="display-5 fw-bold text-dark">
-            Product Catalog
-          </h1>
+          <h1 className="display-5 fw-bold text-dark">Product Catalog</h1>
 
           <p className="lead text-muted mb-0">
             Browse our products and find something you love.
@@ -134,11 +113,8 @@ const Home: React.FC = () => {
         <div className="card border-0 shadow-sm mb-4">
           <div className="card-body p-4">
             <div className="row align-items-center">
-
               <div className="col-md-5 mb-3 mb-md-0">
-                <h5 className="fw-bold mb-1">
-                  Browse Categories
-                </h5>
+                <h5 className="fw-bold mb-1">Browse Categories</h5>
 
                 <p className="text-muted mb-0 small">
                   Filter products by category
@@ -150,67 +126,45 @@ const Home: React.FC = () => {
                   className="form-select"
                   value={selectedCategory}
                   disabled={categoriesLoading}
-                  onChange={(e) =>
-                    setSelectedCategory(e.target.value)
-                  }
+                  onChange={(e) => setSelectedCategory(e.target.value)}
                 >
-                  <option value="all">
-                    All Categories
-                  </option>
+                  <option value="all">All Categories</option>
 
                   {categories.map((category) => (
-                    <option
-                      key={category}
-                      value={category}
-                    >
+                    <option key={category} value={category}>
                       {category}
                     </option>
                   ))}
                 </select>
               </div>
-
             </div>
           </div>
         </div>
 
         {/* Product Count */}
-        {!productsLoading &&
-          !isError &&
-          products.length > 0 && (
-            <div className="d-flex justify-content-between align-items-center mb-3">
+        {!productsLoading && !isError && products.length > 0 && (
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h4 className="fw-bold mb-0">
+              {selectedCategory === "all" ? "All Products" : selectedCategory}
+            </h4>
 
-              <h4 className="fw-bold mb-0">
-                {selectedCategory === "all"
-                  ? "All Products"
-                  : selectedCategory}
-              </h4>
-
-              <span className="badge bg-primary rounded-pill px-3 py-2">
-                {products.length} Products
-              </span>
-
-            </div>
-          )}
+            <span className="badge bg-primary rounded-pill px-3 py-2">
+              {products.length} Products
+            </span>
+          </div>
+        )}
 
         {/* Loading */}
         {productsLoading && (
           <div className="row g-4">
             {[1, 2, 3, 4, 5, 6].map((item) => (
-              <div
-                key={item}
-                className="col-sm-6 col-lg-4"
-              >
+              <div key={item} className="col-sm-6 col-lg-4">
                 <div className="card border-0 shadow-sm h-100">
-
-                  <div
-                    className="placeholder-glow"
-                    style={{ height: "250px" }}
-                  >
+                  <div className="placeholder-glow" style={{ height: "250px" }}>
                     <div className="placeholder w-100 h-100 bg-secondary" />
                   </div>
 
                   <div className="card-body">
-
                     <p className="placeholder-glow">
                       <span className="placeholder col-8" />
                     </p>
@@ -223,7 +177,6 @@ const Home: React.FC = () => {
                     <p className="placeholder-glow">
                       <span className="placeholder col-4" />
                     </p>
-
                   </div>
                 </div>
               </div>
@@ -234,30 +187,21 @@ const Home: React.FC = () => {
         {/* Error */}
         {isError && (
           <div className="alert alert-danger text-center shadow-sm">
-
-            <h5 className="alert-heading">
-              Unable to load products
-            </h5>
+            <h5 className="alert-heading">Unable to load products</h5>
 
             <p className="mb-0">
-              Something went wrong while fetching the products.
-              Please try again later.
+              Something went wrong while fetching the products. Please try again
+              later.
             </p>
-
           </div>
         )}
 
         {/* Products Grid */}
         {!productsLoading && !isError && (
           <div className="row g-4">
-
             {products.map((product) => (
-              <div
-                key={product.id}
-                className="col-sm-6 col-lg-4"
-              >
+              <div key={product.id} className="col-sm-6 col-lg-4">
                 <div className="card h-100 border-0 shadow-sm product-card">
-
                   {/* Product Image */}
                   <div
                     className="bg-white d-flex align-items-center justify-content-center"
@@ -276,7 +220,6 @@ const Home: React.FC = () => {
                   </div>
 
                   <div className="card-body d-flex flex-column p-4">
-
                     {/* Category */}
                     <div className="mb-2">
                       <span className="badge bg-light text-primary border">
@@ -311,34 +254,26 @@ const Home: React.FC = () => {
                     {/* Rating */}
                     {product.rating && (
                       <div className="d-flex align-items-center mb-3">
-
                         <span className="text-warning me-2">
-                          {"★".repeat(
-                            Math.round(
-                              product.rating.rate
-                            )
-                          )}
+                          {"★".repeat(Math.round(product.rating.rate))}
 
-                          {"☆".repeat(
-                            5 -
-                              Math.round(
-                                product.rating.rate
-                              )
-                          )}
+                          {"☆".repeat(5 - Math.round(product.rating.rate))}
                         </span>
 
                         <span className="small text-muted">
-                          {product.rating.rate} (
-                          {product.rating.count})
+                          {product.rating.rate} ({product.rating.count})
                         </span>
-
                       </div>
                     )}
 
                     {/* Price */}
                     <div className="mb-3">
                       <span className="fs-4 fw-bold text-success">
-                        ${product.price.toFixed(2)}
+                        $
+                        {product.price.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        })}
                       </span>
                     </div>
 
@@ -354,12 +289,9 @@ const Home: React.FC = () => {
                         )
                       }
                     >
-                      <span className="me-2">
-                        🛒
-                      </span>
+                      <span className="me-2">🛒</span>
                       Add to Cart
                     </button>
-
                   </div>
                 </div>
               </div>
@@ -369,30 +301,20 @@ const Home: React.FC = () => {
             {products.length === 0 && (
               <div className="col-12">
                 <div className="card border-0 shadow-sm">
-
                   <div className="card-body text-center py-5">
+                    <div className="display-4 mb-3">🔍</div>
 
-                    <div className="display-4 mb-3">
-                      🔍
-                    </div>
-
-                    <h4 className="fw-bold">
-                      No products found
-                    </h4>
+                    <h4 className="fw-bold">No products found</h4>
 
                     <p className="text-muted mb-0">
-                      No products are available for this
-                      category.
+                      No products are available for this category.
                     </p>
-
                   </div>
                 </div>
               </div>
             )}
-
           </div>
         )}
-
       </div>
     </div>
   );

@@ -55,7 +55,11 @@ export default function ProductCard({
 
       <h3>{product.title}</h3>
 
-      <p>${product.price.toFixed(2)}</p>
+      <p>{product.price.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      })}
+      </p>
 
       <p>{product.category}</p>
 
