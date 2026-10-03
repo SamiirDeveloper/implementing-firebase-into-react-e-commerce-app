@@ -219,13 +219,13 @@ const OrderDetails = () => {
 
                 <p className="text-muted mb-1">Quantity: {product.quantity}</p>
 
-                <p className="mb-0">Price: ${product.price.toFixed(2)}</p>
+                <p className="mb-0">Price: {product.price.toFixed(2)}</p>
               </div>
 
               {/* ITEM TOTAL */}
 
               <div className="fw-bold">
-                $
+                
                 {(product.price * product.quantity).toLocaleString("en-US", {
                   style: "currency",
                   currency: "USD",
