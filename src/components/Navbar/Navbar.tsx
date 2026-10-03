@@ -13,7 +13,7 @@ const Navbar = () => {
           to="/"
           className="navbar-brand fw-bold fs-4"
         >
-          🛍️ My Store
+          🛍️ Samir Developer Store
         </Link>
 
         {/* MOBILE NAVBAR BUTTON */}
