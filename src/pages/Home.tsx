@@ -269,7 +269,7 @@ const Home: React.FC = () => {
                     {/* Price */}
                     <div className="mb-3">
                       <span className="fs-4 fw-bold text-success">
-                        $
+                        
                         {product.price.toLocaleString("en-US", {
                           style: "currency",
                           currency: "USD",
